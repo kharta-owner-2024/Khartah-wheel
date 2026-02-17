@@ -1,36 +1,113 @@
-@bot.message_handler(content_types=['web_app_data'])
-def handle_web_data(m):
-    data = m.web_app_data.data
-    uid = m.chat.id
-    
-    # إذا كانت اللفة مدفوعة
-    if data.startswith("PAID_"):
-        prize_str = data.replace("PAID_", "")
-        # خصم سعر اللفة (مثلاً 30,000)
-        cursor.execute("SELECT balance FROM users WHERE user_id=?", (uid,))
-        balance = cursor.fetchone()[0]
-        if balance < 30000:
-            return bot.send_message(uid, "❌ رصيدك غير كافٍ لشراء لفة (تحتاج 30,000 NSP).")
-        
-        cursor.execute("UPDATE users SET balance = balance - 30000 WHERE user_id=?", (uid,))
-        bot.send_message(uid, "💎 تم شراء لفة مدفوعة بـ 30,000 NSP")
-        res = prize_str
-    else:
-        res = data
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kharta Master Wheel</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root { --gold: #d4af37; --dark: #0a0a0a; --accent: #ffd700; }
+        body {
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+            color: white; font-family: 'Cairo', sans-serif;
+            margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden;
+        }
+        .wheel-box { position: relative; width: 310px; height: 310px; border: 5px solid var(--gold); border-radius: 50%; box-shadow: 0 0 30px rgba(212, 175, 55, 0.3); }
+        .arrow {
+            position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid var(--gold); z-index: 100;
+        }
+        canvas { width: 100%; height: 100%; border-radius: 50%; transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1); }
+        .center {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 50px; height: 50px; background: var(--gold); border-radius: 50%; border: 3px solid #000; z-index: 10;
+        }
+        .controls { margin-top: 30px; display: flex; flex-direction: column; gap: 15px; width: 80%; }
+        button {
+            padding: 12px; font-size: 18px; font-weight: bold; border-radius: 25px; border: none; cursor: pointer; transition: 0.3s;
+        }
+        #spin-btn { background: linear-gradient(180deg, var(--accent), var(--gold)); color: #000; }
+        #buy-btn { background: rgba(255, 255, 255, 0.1); color: var(--gold); border: 1px solid var(--gold); font-size: 14px; }
+        button:disabled { opacity: 0.5; }
+    </style>
+</head>
+<body>
 
-    # معالجة النتيجة النهائية
-    if res == "حظ أوفر":
-        cursor.execute("UPDATE users SET free_spin = 1 WHERE user_id = ?", (uid,))
-        bot.send_message(uid, "😢 للأسف، حظ أوفر في المرة القادمة!")
-    elif res == "RESPIN":
-        cursor.execute("UPDATE users SET free_spin = 0 WHERE user_id = ?", (uid,))
-        bot.send_message(uid, "🔄 حصلت على لفة إضافية مجانية! جرب مجدداً.")
-    else:
-        try:
-            amt = int(res.replace(",", ""))
-            cursor.execute("UPDATE users SET balance = balance + ?, free_spin = 1 WHERE user_id = ?", (amt, uid))
-            bot.send_message(uid, f"🎊 مبروك! فزت بـ {amt} NSP وتمت إضافتها لرصيدك.")
-        except:
-            bot.send_message(uid, f"🎁 لقد فزت بـ: {res}")
+    <div class="wheel-box">
+        <div class="arrow"></div>
+        <canvas id="wheel" width="500" height="500"></canvas>
+        <div class="center"></div>
+    </div>
+
+    <div class="controls">
+        <button id="spin-btn">تدوير مجاني 🎡</button>
+        <button id="buy-btn">💎 شراء لفة مدفوعة (أرباح أعلى)</button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        const canvas = document.getElementById('wheel');
+        const ctx = canvas.getContext('2d');
+        const spinBtn = document.getElementById('spin-btn');
+        const buyBtn = document.getElementById('buy-btn');
+
+        // الخيارات الجديدة (تصفية بناءً على طلبك)
+        const sectors = [
+            { label: "10,000", color: "#111", p: 0.50 }, // 50% احتمال
+            { label: "20,000", color: "#d4af37", p: 0.15 },
+            { label: "حظ أوفر", color: "#111", p: 0.15 },
+            { label: "50,000", color: "#d4af37", p: 0.05 },
+            { label: "10,000", color: "#111", p: 0.05 },
+            { label: "RESPIN", color: "#d4af37", p: 0.05 },
+            { label: "100,000", color: "#111", p: 0.02 },
+            { label: "حظ أوفر", color: "#d4af37", p: 0.03 }
+        ];
+
+        function draw() {
+            const arc = 2 * Math.PI / sectors.length;
+            sectors.forEach((s, i) => {
+                const angle = i * arc;
+                ctx.beginPath(); ctx.fillStyle = s.color;
+                ctx.moveTo(250, 250); ctx.arc(250, 250, 250, angle, angle + arc);
+                ctx.fill(); ctx.save();
+                ctx.translate(250, 250); ctx.rotate(angle + arc/2);
+                ctx.textAlign = "right"; ctx.fillStyle = s.color === "#d4af37" ? "#000" : "#fff";
+                ctx.font = "bold 22px Arial"; ctx.fillText(s.label, 230, 10); ctx.restore();
+            });
+        }
+
+        function getWeightedResult(isPaid) {
+            // إذا كانت لفة مدفوعة، نقلل احتمال "حظ أوفر" ونزيد المبالغ الكبيرة
+            let r = Math.random();
+            let stack = 0;
+            for (let s of sectors) {
+                let probability = s.p;
+                if (isPaid && s.label === "حظ أوفر") probability = 0.02; // تقليل الخسارة للمدفوع
+                stack += probability;
+                if (r <= stack) return s.label;
+            }
+            return sectors[0].label;
+        }
+
+        function runSpin(isPaid) {
+            spinBtn.disabled = buyBtn.disabled = true;
+            const result = getWeightedResult(isPaid);
+            const targetIndex = sectors.findIndex(s => s.label === result);
+            const deg = 3600 + (360 - (targetIndex * 45) - 90); // تعديل الزاوية لتناسب السهم العلوي
             
-    conn.commit()
+            canvas.style.transform = `rotate(${deg}deg)`;
+            setTimeout(() => {
+                tg.sendData(isPaid ? "PAID_" + result : result);
+                setTimeout(() => tg.close(), 1000);
+            }, 5500);
+        }
+
+        spinBtn.onclick = () => runSpin(false);
+        buyBtn.onclick = () => runSpin(true);
+
+        draw();
+    </script>
+</body>
+</html>
