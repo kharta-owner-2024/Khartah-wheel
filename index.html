@@ -1,142 +1,36 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kharta Wheel</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        body {
-            background-color: #1a1a1a;
-            color: white;
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-        }
-        .wheel-container {
-            position: relative;
-            width: 300px;
-            height: 300px;
-        }
-        canvas {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 5px solid #ffd700;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-        }
-        .pointer {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40px;
-            z-index: 10;
-        }
-        button {
-            margin-top: 30px;
-            padding: 15px 40px;
-            font-size: 18px;
-            background: linear-gradient(45deg, #ffd700, #ffa500);
-            border: none;
-            border-radius: 25px;
-            color: black;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-        button:disabled { background: #555; cursor: not-allowed; }
-    </style>
-</head>
-<body>
-
-    <div class="wheel-container">
-        <img src="https://cdn-icons-png.flaticon.com/512/3585/3585838.png" class="pointer">
-        <canvas id="wheel"></canvas>
-    </div>
-
-    <button id="spin-btn">إبدأ السحب!</button>
-
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-
-        const canvas = document.getElementById('wheel');
-        const ctx = canvas.getContext('2d');
-        const spinBtn = document.getElementById('spin-btn');
-
-        // الخيارات التي طلبتها (8 أقسام متساوية)
-        const prizes = [
-            "10,000 NSP", "20,000 NSP", "CASH BACK 10%", 
-            "حظ أوفر", "TG PREMIUM", "10,000 NSP", 
-            "RESPIN", "BONUS 5%"
-        ];
+@bot.message_handler(content_types=['web_app_data'])
+def handle_web_data(m):
+    data = m.web_app_data.data
+    uid = m.chat.id
+    
+    # إذا كانت اللفة مدفوعة
+    if data.startswith("PAID_"):
+        prize_str = data.replace("PAID_", "")
+        # خصم سعر اللفة (مثلاً 30,000)
+        cursor.execute("SELECT balance FROM users WHERE user_id=?", (uid,))
+        balance = cursor.fetchone()[0]
+        if balance < 30000:
+            return bot.send_message(uid, "❌ رصيدك غير كافٍ لشراء لفة (تحتاج 30,000 NSP).")
         
-        const colors = ["#e74c3c", "#3498db", "#f1c40f", "#2c3e50", "#9b59b6", "#e67e22", "#2ecc71", "#1abc9c"];
-        
-        let startAngle = 0;
-        const arc = Math.PI / (prizes.length / 2);
-        let spinTimeout = null;
+        cursor.execute("UPDATE users SET balance = balance - 30000 WHERE user_id=?", (uid,))
+        bot.send_message(uid, "💎 تم شراء لفة مدفوعة بـ 30,000 NSP")
+        res = prize_str
+    else:
+        res = data
 
-        function drawWheel() {
-            canvas.width = 400;
-            canvas.height = 400;
-            prizes.forEach((prize, i) => {
-                const angle = startAngle + i * arc;
-                ctx.fillStyle = colors[i];
-                ctx.beginPath();
-                ctx.moveTo(200, 200);
-                ctx.arc(200, 200, 200, angle, angle + arc, false);
-                ctx.lineTo(200, 200);
-                ctx.fill();
-
-                ctx.save();
-                ctx.translate(200 + Math.cos(angle + arc / 2) * 140, 200 + Math.sin(angle + arc / 2) * 140);
-                ctx.rotate(angle + arc / 2 + Math.PI / 2);
-                ctx.fillStyle = "white";
-                ctx.font = "bold 14px Arial";
-                ctx.textAlign = "center";
-                ctx.fillText(prize, 0, 0);
-                ctx.restore();
-            });
-        }
-
-        function rotateWheel() {
-            const spinAngle = Math.random() * 10 + 30;
-            let currentRotation = 0;
-            const totalRotation = spinAngle * 10;
+    # معالجة النتيجة النهائية
+    if res == "حظ أوفر":
+        cursor.execute("UPDATE users SET free_spin = 1 WHERE user_id = ?", (uid,))
+        bot.send_message(uid, "😢 للأسف، حظ أوفر في المرة القادمة!")
+    elif res == "RESPIN":
+        cursor.execute("UPDATE users SET free_spin = 0 WHERE user_id = ?", (uid,))
+        bot.send_message(uid, "🔄 حصلت على لفة إضافية مجانية! جرب مجدداً.")
+    else:
+        try:
+            amt = int(res.replace(",", ""))
+            cursor.execute("UPDATE users SET balance = balance + ?, free_spin = 1 WHERE user_id = ?", (amt, uid))
+            bot.send_message(uid, f"🎊 مبروك! فزت بـ {amt} NSP وتمت إضافتها لرصيدك.")
+        except:
+            bot.send_message(uid, f"🎁 لقد فزت بـ: {res}")
             
-            function animate() {
-                currentRotation += 5;
-                startAngle += (Math.PI / 180) * 10;
-                drawWheel();
-                if (currentRotation < totalRotation) {
-                    requestAnimationFrame(animate);
-                } else {
-                    const index = Math.floor((((startAngle * 180 / Math.PI) % 360) + 360) % 360 / (360 / prizes.length));
-                    const result = prizes[prizes.length - 1 - index];
-                    
-                    // إرسال النتيجة للبوت وإغلاق الواجهة
-                    setTimeout(() => {
-                        tg.sendData(result);
-                        tg.close();
-                    }, 1500);
-                }
-            }
-            animate();
-        }
-
-        spinBtn.addEventListener('click', () => {
-            spinBtn.disabled = true;
-            rotateWheel();
-        });
-
-        drawWheel();
-    </script>
-</body>
-</html>
+    conn.commit()
