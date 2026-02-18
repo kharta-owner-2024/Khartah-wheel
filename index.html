@@ -1,220 +1,57 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>خارطة ماستر - العجلة الملكية</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عجلة الحظ - نظام خارطة</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --gold: #d4af37;
-            --dark-gold: #aa841e;
-            --bg: #0a0a0a;
-            --glass: rgba(255, 255, 255, 0.05);
-        }
-
-        body {
-            background-color: var(--bg);
-            background-image: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
-            color: white;
-            font-family: 'Cairo', sans-serif;
-            margin: 0;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-
-        .header {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .header h1 {
-            color: var(--gold);
-            font-size: 24px;
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-            margin: 0;
-        }
-
-        .wheel-container {
-            position: relative;
-            width: 320px;
-            height: 320px;
-            border: 8px solid var(--gold);
-            border-radius: 50%;
-            box-shadow: 0 0 50px rgba(212, 175, 55, 0.2), inset 0 0 20px rgba(0,0,0,0.5);
-        }
-
-        .pointer {
-            position: absolute;
-            top: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-top: 35px solid var(--gold);
-            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5));
-            z-index: 100;
-        }
-
-        .pointer::after {
-            content: '';
-            position: absolute;
-            top: -40px;
-            left: -5px;
-            width: 10px;
-            height: 10px;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 0 15px white;
-        }
-
-        canvas {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            transition: transform 6s cubic-bezier(0.15, 0, 0.15, 1);
-        }
-
-        .center-circle {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            background: radial-gradient(circle, var(--gold), var(--dark-gold));
-            border: 4px solid #000;
-            border-radius: 50%;
-            z-index: 10;
-            box-shadow: 0 0 15px rgba(0,0,0,0.8);
-        }
-
-        .spin-btn {
-            margin-top: 40px;
-            padding: 15px 60px;
-            font-size: 20px;
-            font-family: 'Cairo', sans-serif;
-            font-weight: bold;
-            color: #000;
-            background: linear-gradient(180deg, var(--gold), var(--dark-gold));
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
-            transition: 0.3s;
-        }
-
-        .spin-btn:active {
-            transform: scale(0.95);
-        }
-
-        .spin-btn:disabled {
-            background: #444;
-            color: #888;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #1a1a1a; color: white; }
+        .wheel-container { position: relative; width: 300px; height: 300px; border: 8px solid #ff9800; border-radius: 50%; overflow: hidden; transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); }
+        .wheel { width: 100%; height: 100%; position: relative; }
+        .segment { position: absolute; width: 50%; height: 50%; transform-origin: 100% 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
+        .btn-spin { margin-top: 20px; padding: 15px 30px; background: #ff9800; border: none; border-radius: 25px; color: white; font-size: 18px; cursor: pointer; font-weight: bold; }
+        .pointer { width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid #ff5722; position: absolute; top: -10px; z-index: 10; }
     </style>
 </head>
 <body>
-
-    <div class="header">
-        <h1>عجلة الحظ الملكية 🎡</h1>
-    </div>
-
-    <div class="wheel-container">
+    <h2>🎡 جرب حظك واربح NSP</h2>
+    <div style="position: relative;">
         <div class="pointer"></div>
-        <canvas id="wheel" width="500" height="500"></canvas>
-        <div class="center-circle"></div>
+        <div class="wheel-container" id="wheel-container">
+            <div class="wheel" id="wheel">
+                </div>
+        </div>
     </div>
-
-    <button id="spinBtn" class="spin-btn">إبدأ التدوير ✨</button>
+    <button class="btn-spin" onclick="spin()">لف العجلة!</button>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+        const prizes = ["1000", "5000", "0", "10000", "0", "50000", "0", "500"];
+        const colors = ["#e91e63", "#9c27b0", "#673ab7", "#3f51b5", "#2196f3", "#00bcd4", "#4caf50", "#ffeb3b"];
+        const wheel = document.getElementById('wheel');
 
-        const canvas = document.getElementById('wheel');
-        const ctx = canvas.getContext('2d');
-        const spinBtn = document.getElementById('spinBtn');
+        // إنشاء أقسام العجلة
+        prizes.forEach((prize, i) => {
+            const seg = document.createElement('div');
+            seg.className = 'segment';
+            seg.style.transform = `rotate(${i * 45}deg)`;
+            seg.style.backgroundColor = colors[i];
+            seg.innerText = prize;
+            wheel.appendChild(seg);
+        });
 
-        // تعريف الجوائز مع الاحتمالات (Weights)
-        const sectors = [
-            { label: "10,000", color: "#000000", text: "#ffffff", weight: 45 }, // 45%
-            { label: "20,000", color: "#d4af37", text: "#000000", weight: 25 }, // 25%
-            { label: "حظ أوفر", color: "#000000", text: "#ffffff", weight: 15 }, // 15%
-            { label: "50,000", color: "#d4af37", text: "#000000", weight: 10 }, // 10%
-            { label: "100,000", color: "#000000", text: "#ffffff", weight: 3 },  // 3%
-            { label: "إعادة تدوير", color: "#d4af37", text: "#000000", weight: 2 }  // 2%
-        ];
-
-        function drawWheel() {
-            const numSectors = sectors.length;
-            const arc = (2 * Math.PI) / numSectors;
-
-            sectors.forEach((sector, i) => {
-                const angle = i * arc;
-                
-                // رسم القسم
-                ctx.beginPath();
-                ctx.fillStyle = sector.color;
-                ctx.moveTo(250, 250);
-                ctx.arc(250, 250, 250, angle, angle + arc);
-                ctx.fill();
-                ctx.strokeStyle = "rgba(212, 175, 55, 0.3)";
-                ctx.lineWidth = 2;
-                ctx.stroke();
-
-                // إضافة النص
-                ctx.save();
-                ctx.translate(250, 250);
-                ctx.rotate(angle + arc / 2);
-                ctx.textAlign = "right";
-                ctx.fillStyle = sector.text;
-                ctx.font = "bold 22px Cairo";
-                ctx.fillText(sector.label, 230, 10);
-                ctx.restore();
-            });
-        }
-
-        function getWeightedIndex() {
-            const totalWeight = sectors.reduce((acc, s) => acc + s.weight, 0);
-            let random = Math.random() * totalWeight;
-            for (let i = 0; i < sectors.length; i++) {
-                if (random < sectors[i].weight) return i;
-                random -= sectors[i].weight;
-            }
-            return 0;
-        }
-
-        spinBtn.onclick = () => {
-            spinBtn.disabled = true;
-            const winIndex = getWeightedIndex();
+        let currentRotation = 0;
+        function spin() {
+            const randomDegree = Math.floor(Math.random() * 360) + 3600; // 10 لفات على الأقل
+            currentRotation += randomDegree;
+            document.getElementById('wheel-container').style.transform = `rotate(${currentRotation}deg)`;
             
-            // حساب زاوية الدوران بحيث يتوقف السهم العلوي عند الجائزة
-            const sectorAngle = 360 / sectors.length;
-            const extraSpins = 3600; // 10 لفات كاملة
-            const stopAngle = extraSpins + (360 - (winIndex * sectorAngle) - (sectorAngle / 2));
-
-            canvas.style.transform = `rotate(${stopAngle}deg)`;
-
             setTimeout(() => {
-                const result = sectors[winIndex].label;
-                tg.sendData(result === "إعادة تدوير" ? "RESPIN" : result);
-                
-                // تأثير اهتزاز خفيف عند الفوز
-                tg.HapticFeedback.notificationOccurred('success');
-            }, 6500);
-        };
-
-        drawWheel();
+                alert("تهانينا! لقد ربحت، سيتم إضافة الرصيد لحسابك (تأكيدي)");
+                // إغلاق الـ WebApp تلقائياً بعد الفوز
+                window.Telegram.WebApp.close();
+            }, 4500);
+        }
     </script>
 </body>
 </html>
