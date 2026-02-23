@@ -1,14 +1,20 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عجلة خارطة الملكية</title>
+    <title>Property Map Wheel</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
             --gold-gradient: linear-gradient(145deg, #dfbb45, #bf953f, #fcf6ba, #b38728);
             --dark-bg: #0d0d0d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
@@ -17,8 +23,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
             background: radial-gradient(circle, #1a1a1a 0%, #000000 100%);
             color: white;
             overflow: hidden;
@@ -31,7 +36,6 @@
             align-items: center;
         }
 
-        /* الإطار الذهبي الخارجي */
         .wheel-outer-border {
             position: relative;
             width: 320px;
@@ -76,7 +80,7 @@
 
         .segment span {
             position: absolute;
-            transform: rotate(22deg) translateY(-80px); /* وزن الرقم في منتصف المثلث */
+            transform: rotate(22deg) translateY(-80px);
             font-weight: 900;
             font-size: 18px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
@@ -84,7 +88,6 @@
             white-space: nowrap;
         }
 
-        /* السهم (المؤشر) */
         .pointer {
             position: absolute;
             top: -20px;
@@ -98,7 +101,6 @@
             filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5));
         }
 
-        /* الجوهرة في المركز */
         .center-diamond {
             position: absolute;
             width: 50px;
@@ -130,11 +132,20 @@
             font-weight: bold;
             text-transform: uppercase;
             box-shadow: 0 5px 15px rgba(191, 149, 63, 0.4);
-            transition: 0.3s;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn-spin:hover {
+            box-shadow: 0 8px 25px rgba(191, 149, 63, 0.6);
         }
 
         .btn-spin:active {
             transform: scale(0.95);
+        }
+
+        .btn-spin:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         h2 {
@@ -142,12 +153,13 @@
             letter-spacing: 2px;
             color: #dfbb45;
             text-shadow: 0 0 10px rgba(223, 187, 69, 0.3);
+            font-size: 24px;
         }
     </style>
 </head>
 <body>
 
-    <h2>نظام خارطة NSP</h2>
+    <h2>NSP Map System</h2>
 
     <div class="main-container">
         <div class="pointer"></div>
@@ -159,71 +171,130 @@
         </div>
     </div>
 
-    <button class="btn-spin" id="spin-button" onclick="spin()">إبدأ اللعب!</button>
+    <button class="btn-spin" id="spin-button">Start Game!</button>
 
     <script>
-        // الأرقام والألوان الفخمة المستوحاة من الصورة
-        const prizes = ["10,00", "5000", "خسارة", "3000", "1000", "5000", "حظ أوفر", "3000"];
-        const colors = [
-            "#4a0e0e", "#1a3a3a", "#4a3b0e", "#0e1a4a", 
-            "#1a4a1e", "#3a0e4a", "#222222", "#554400"
-        ];
-        
+        // Configuration: Prize values and their corresponding colors
+        const CONFIG = {
+            prizes: ["10.00", "5000", "Loss", "3000", "1000", "5000", "Better Luck", "3000"],
+            colors: [
+                "#4a0e0e", "#1a3a3a", "#4a3b0e", "#0e1a4a", 
+                "#1a4a1e", "#3a0e4a", "#222222", "#554400"
+            ],
+            spinDuration: 5000,
+            minFullRotations: 8
+        };
+
+        // DOM Elements
         const wheel = document.getElementById('wheel');
         const wheelContainer = document.getElementById('wheel-container');
+        const spinButton = document.getElementById('spin-button');
 
-        // رسم العجلة برمجياً
-        prizes.forEach((prize, i) => {
-            const seg = document.createElement('div');
-            seg.className = 'segment';
-            seg.style.transform = `rotate(${i * 45}deg)`;
-            seg.style.backgroundColor = colors[i];
-            
-            const span = document.createElement('span');
-            span.innerText = prize;
-            seg.appendChild(span);
-            
-            wheel.appendChild(seg);
-        });
-
+        // State management
         let currentRotation = 0;
         let isSpinning = false;
 
+        /**
+         * Initialize the wheel by creating segments
+         */
+        function initializeWheel() {
+            const segmentAngle = 360 / CONFIG.prizes.length;
+            
+            CONFIG.prizes.forEach((prize, index) => {
+                const segment = createSegment(prize, index, segmentAngle);
+                wheel.appendChild(segment);
+            });
+        }
+
+        /**
+         * Create a single wheel segment
+         */
+        function createSegment(prize, index, angle) {
+            const segment = document.createElement('div');
+            segment.className = 'segment';
+            segment.style.transform = `rotate(${index * angle}deg)`;
+            segment.style.backgroundColor = CONFIG.colors[index];
+            
+            const label = document.createElement('span');
+            label.textContent = prize;
+            segment.appendChild(label);
+            
+            return segment;
+        }
+
+        /**
+         * Calculate the winning prize based on rotation
+         */
+        function calculateWinner(rotation) {
+            const actualDegree = rotation % 360;
+            const segmentAngle = 360 / CONFIG.prizes.length;
+            const pointerOffset = segmentAngle / 2;
+            const prizeIndex = Math.floor(((360 - actualDegree + pointerOffset) % 360) / segmentAngle);
+            
+            return CONFIG.prizes[prizeIndex];
+        }
+
+        /**
+         * Display the result to the user
+         */
+        function showResult(prize) {
+            const isLoss = prize === "Loss" || prize === "Better Luck";
+            const message = isLoss 
+                ? `Sorry! ${prize}` 
+                : `Congratulations! You won ${prize} NSP`;
+            
+            alert(message);
+
+            // Close Telegram WebApp if available
+            if (window.Telegram?.WebApp) {
+                window.Telegram.WebApp.close();
+            }
+        }
+
+        /**
+         * Spin the wheel with animation
+         */
         function spin() {
             if (isSpinning) return;
-            isSpinning = true;
             
-            // حساب دوران عشوائي (على الأقل 8 لفات كاملة)
-            const randomDegree = Math.floor(Math.random() * 360) + 2880; 
+            isSpinning = true;
+            spinButton.disabled = true;
+            
+            // Calculate random rotation (minimum 8 full rotations)
+            const randomDegree = Math.floor(Math.random() * 360) + (360 * CONFIG.minFullRotations);
             currentRotation += randomDegree;
             
+            // Apply rotation with smooth animation
             wheelContainer.style.transform = `rotate(${currentRotation}deg)`;
             
-            // استخراج النتيجة بعد توقف العجلة
+            // Determine winner after animation completes
             setTimeout(() => {
                 isSpinning = false;
-                const actualDegree = currentRotation % 360;
-                const prizeIndex = Math.floor(((360 - actualDegree + 22.5) % 360) / 45);
-                const winPrize = prizes[prizeIndex];
-
-                if (winPrize === "خسارة" || winPrize === "حظ أوفر") {
-                    alert("للأسف! " + winPrize);
-                } else {
-                    alert("مبروك! ربحت " + winPrize + " NSP");
-                }
+                spinButton.disabled = false;
                 
-                // إغلاق نافذة التليجرام
-                if (window.Telegram && window.Telegram.WebApp) {
-                    window.Telegram.WebApp.close();
-                }
-            }, 5000);
+                const winner = calculateWinner(currentRotation);
+                showResult(winner);
+            }, CONFIG.spinDuration);
         }
 
-        // تحسين العرض على التليجرام
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.expand();
-            window.Telegram.WebApp.ready();
+        /**
+         * Initialize Telegram WebApp
+         */
+        function initializeTelegramApp() {
+            if (window.Telegram?.WebApp) {
+                window.Telegram.WebApp.expand();
+                window.Telegram.WebApp.ready();
+            }
         }
+
+        // Event Listeners
+        spinButton.addEventListener('click', spin);
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeWheel();
+            initializeTelegramApp();
+        });
     </script>
 </body>
 </html>
