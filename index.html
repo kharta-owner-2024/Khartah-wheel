@@ -8,14 +8,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
 
 :root {
-  --red:    #c0392b;
-  --red2:   #e74c3c;
-  --gold:   #f0c040;
-  --gold2:  #d4a017;
-  --dark:   #0a0608;
-  --dark2:  #150d0b;
-  --cyan:   #00e5ff;
-  --win:    #00ff99;
+  --red:   #c0392b;
+  --gold:  #f0c040;
+  --gold2: #d4a017;
+  --dark:  #0a0608;
+  --win:   #00ff99;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -27,49 +24,36 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px 16px 40px;
+  justify-content: center;
+  padding: 24px 16px;
   color: white;
-  overflow-x: hidden;
   background-image:
-    radial-gradient(ellipse at 50% 0%,   rgba(192,57,43,0.18) 0%, transparent 60%),
-    radial-gradient(ellipse at 20% 80%,  rgba(0,229,255,0.07) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 50%,  rgba(192,57,43,0.1)  0%, transparent 50%);
+    radial-gradient(ellipse at 50% 0%,  rgba(192,57,43,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse at 20% 80%, rgba(0,229,255,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 50%, rgba(192,57,43,0.10) 0%, transparent 50%);
 }
 
-/* ── خطوط الليزر في الخلفية ── */
 body::before {
   content:'';
-  position:fixed;
-  inset:0;
+  position:fixed; inset:0;
   background:
-    linear-gradient(90deg, transparent 49.8%, rgba(0,229,255,0.04) 50%, transparent 50.2%),
-    linear-gradient(0deg,  transparent 49.8%, rgba(0,229,255,0.04) 50%, transparent 50.2%);
-  pointer-events:none;
-  z-index:0;
+    linear-gradient(90deg, transparent 49.8%, rgba(0,229,255,0.03) 50%, transparent 50.2%),
+    linear-gradient(0deg,  transparent 49.8%, rgba(0,229,255,0.03) 50%, transparent 50.2%);
+  pointer-events:none; z-index:0;
 }
 
 /* ── الهيدر ── */
 .header {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 16px;
+  position:relative; z-index:1;
+  display:flex; flex-direction:column;
+  align-items:center; gap:6px;
+  margin-bottom:16px;
 }
 
-/* شعار K */
-.logo-wrap {
-  position: relative;
-  width: 70px;
-  height: 70px;
-}
+.logo-wrap { position:relative; width:68px; height:68px; }
 .logo-ring {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 2px solid var(--gold);
+  position:absolute; inset:0; border-radius:50%;
+  border:2px solid var(--gold);
   box-shadow: 0 0 16px rgba(240,192,64,0.5), inset 0 0 16px rgba(192,57,43,0.3);
   animation: ringPulse 3s ease-in-out infinite alternate;
 }
@@ -78,253 +62,154 @@ body::before {
   to   { box-shadow: 0 0 28px rgba(240,192,64,0.8), inset 0 0 20px rgba(192,57,43,0.5); }
 }
 .logo-k {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
+  width:100%; height:100%; border-radius:50%;
   background: radial-gradient(circle, #2a0f0a 0%, #150505 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  font-weight: 900;
-  color: var(--gold);
+  display:flex; align-items:center; justify-content:center;
+  font-size:2rem; font-weight:900; color:var(--gold);
   text-shadow: 0 0 12px rgba(240,192,64,0.8);
-  letter-spacing: -1px;
 }
-
 .brand-name {
-  font-size: 1.5rem;
-  font-weight: 900;
-  letter-spacing: 3px;
+  font-size:1.5rem; font-weight:900; letter-spacing:3px;
   background: linear-gradient(135deg, var(--gold) 0%, #fff5c0 50%, var(--gold2) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: none;
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text;
   filter: drop-shadow(0 0 12px rgba(240,192,64,0.5));
 }
 .brand-sub {
-  font-size: 0.72rem;
-  color: rgba(255,255,255,0.35);
-  letter-spacing: 2px;
+  font-size:0.72rem; color:rgba(255,255,255,0.35); letter-spacing:2px;
 }
 
 /* ── الرصيد ── */
 .balance-box {
-  position: relative;
-  z-index: 1;
+  position:relative; z-index:1;
   background: linear-gradient(135deg, rgba(192,57,43,0.15), rgba(0,0,0,0.4));
-  border: 1px solid rgba(240,192,64,0.25);
-  border-radius: 16px;
-  padding: 10px 36px;
-  text-align: center;
-  margin-bottom: 18px;
-  backdrop-filter: blur(8px);
+  border:1px solid rgba(240,192,64,0.25);
+  border-radius:16px; padding:10px 36px;
+  text-align:center; margin-bottom:18px;
+  backdrop-filter:blur(8px);
 }
-.balance-label { font-size: 0.72rem; color: rgba(255,255,255,0.38); letter-spacing: 1px; }
-.balance-value { font-size: 1.45rem; font-weight: 900; color: var(--gold); letter-spacing: 1px; }
+.balance-label { font-size:0.72rem; color:rgba(255,255,255,0.38); letter-spacing:1px; }
+.balance-value { font-size:1.45rem; font-weight:900; color:var(--gold); letter-spacing:1px; }
 
 /* ── العجلة ── */
 .wheel-section {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 18px;
+  position:relative; z-index:1;
+  display:flex; flex-direction:column;
+  align-items:center; margin-bottom:18px;
 }
-
-/* هالة خلف العجلة */
 .wheel-glow {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 340px; height: 340px;
-  border-radius: 50%;
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  width:340px; height:340px; border-radius:50%;
   background: radial-gradient(circle, rgba(192,57,43,0.18) 0%, transparent 70%);
-  pointer-events: none;
+  pointer-events:none;
   animation: glowPulse 4s ease-in-out infinite alternate;
 }
 @keyframes glowPulse {
-  from { opacity: 0.6; transform: translate(-50%,-50%) scale(0.95); }
-  to   { opacity: 1;   transform: translate(-50%,-50%) scale(1.05); }
+  from { opacity:0.6; transform:translate(-50%,-50%) scale(0.95); }
+  to   { opacity:1;   transform:translate(-50%,-50%) scale(1.05); }
 }
 
-.wheel-wrap {
-  position: relative;
-  width: 300px;
-  height: 300px;
-}
+.wheel-wrap { position:relative; width:300px; height:300px; }
 
-/* المؤشر */
 .pointer-wrap {
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 20;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  position:absolute; top:-20px; left:50%;
+  transform:translateX(-50%);
+  z-index:20; display:flex; flex-direction:column; align-items:center;
 }
 .pointer-stick {
-  width: 4px; height: 16px;
+  width:4px; height:16px;
   background: linear-gradient(to bottom, var(--gold), var(--red));
-  border-radius: 2px 2px 0 0;
+  border-radius:2px 2px 0 0;
 }
 .pointer-head {
-  width: 0; height: 0;
-  border-left:  12px solid transparent;
-  border-right: 12px solid transparent;
-  border-top:   24px solid var(--gold);
+  width:0; height:0;
+  border-left:12px solid transparent;
+  border-right:12px solid transparent;
+  border-top:24px solid var(--gold);
   filter: drop-shadow(0 2px 8px rgba(240,192,64,0.9));
 }
 
 canvas#wheel {
-  width: 300px; height: 300px;
-  border-radius: 50%;
+  width:300px; height:300px; border-radius:50%;
   box-shadow:
     0 0 0 3px var(--gold2),
     0 0 0 6px rgba(192,57,43,0.4),
     0 0 0 10px rgba(240,192,64,0.1),
     0 0 50px rgba(192,57,43,0.3);
-  display: block;
+  display:block;
 }
 
 /* ── زر اللف ── */
 .spin-btn {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: 300px;
-  padding: 15px;
-  border: none;
-  border-radius: 16px;
-  font-family: 'Cairo', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 900;
-  cursor: pointer;
+  position:relative; z-index:1;
+  width:100%; max-width:300px; padding:15px;
+  border:none; border-radius:16px;
+  font-family:'Cairo',sans-serif; font-size:1.1rem; font-weight:900;
+  cursor:pointer;
   background: linear-gradient(135deg, #c0392b 0%, #8b0000 50%, #c0392b 100%);
-  color: var(--gold);
-  border: 1px solid rgba(240,192,64,0.4);
-  box-shadow:
-    0 4px 20px rgba(192,57,43,0.5),
-    inset 0 1px 0 rgba(255,255,255,0.1);
-  transition: all 0.2s;
-  margin-bottom: 18px;
-  letter-spacing: 1px;
+  color:var(--gold);
+  border:1px solid rgba(240,192,64,0.4);
+  box-shadow: 0 4px 20px rgba(192,57,43,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+  transition:all 0.2s; letter-spacing:1px;
 }
 .spin-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(192,57,43,0.7), inset 0 1px 0 rgba(255,255,255,0.1);
-  color: #fff5a0;
+  transform:translateY(-2px);
+  box-shadow:0 8px 30px rgba(192,57,43,0.7);
+  color:#fff5a0;
 }
-.spin-btn:active:not(:disabled) { transform: scale(0.98); }
-.spin-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
-
-/* ── جدول الجوائز ── */
-.prizes-box {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: 300px;
-  background: rgba(0,0,0,0.4);
-  border: 1px solid rgba(240,192,64,0.15);
-  border-radius: 16px;
-  overflow: hidden;
-  backdrop-filter: blur(10px);
-}
-.prizes-head {
-  text-align: center;
-  padding: 10px;
-  font-size: 0.78rem;
-  color: rgba(255,255,255,0.4);
-  letter-spacing: 1px;
-  border-bottom: 1px solid rgba(240,192,64,0.12);
-  background: rgba(192,57,43,0.1);
-}
-.prize-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 9px 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-  font-size: 0.88rem;
-}
-.prize-row:last-child { border-bottom: none; }
-.prize-left { display: flex; align-items: center; gap: 10px; }
-.prize-dot  { width: 10px; height: 10px; border-radius: 3px; }
-.prize-pct  { color: var(--gold); font-weight: 700; font-size: 0.85rem; }
+.spin-btn:active:not(:disabled) { transform:scale(0.98); }
+.spin-btn:disabled { opacity:0.35; cursor:not-allowed; transform:none; }
 
 /* ── نافذة النتيجة ── */
 .overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.88);
-  z-index: 100;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(8px);
+  position:fixed; inset:0;
+  background:rgba(0,0,0,0.88);
+  z-index:100; display:none;
+  align-items:center; justify-content:center;
+  backdrop-filter:blur(8px);
 }
-.overlay.show { display: flex; }
+.overlay.show { display:flex; }
 
 .result-card {
   background: linear-gradient(160deg, #1a0a08, #0f0505);
-  border: 1px solid rgba(240,192,64,0.4);
-  border-radius: 24px;
-  padding: 38px 28px;
-  text-align: center;
-  max-width: 300px;
-  width: 90%;
+  border:1px solid rgba(240,192,64,0.4);
+  border-radius:24px; padding:38px 28px;
+  text-align:center; max-width:300px; width:90%;
   box-shadow:
     0 0 0 1px rgba(192,57,43,0.3),
-    0 0 60px rgba(192,57,43,0.25),
-    0 0 120px rgba(240,192,64,0.1);
-  animation: pop 0.45s cubic-bezier(0.175,0.885,0.32,1.275);
+    0 0 60px rgba(192,57,43,0.25);
+  animation:pop 0.45s cubic-bezier(0.175,0.885,0.32,1.275);
 }
 @keyframes pop {
   from { transform:scale(0.4); opacity:0; }
   to   { transform:scale(1);   opacity:1; }
 }
-
-/* خط ذهبي زخرفي */
 .result-card::before {
   content:'';
-  display:block;
-  width: 60px; height: 2px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-  margin: 0 auto 20px;
+  display:block; width:60px; height:2px;
+  background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin:0 auto 20px;
 }
 
-.res-emoji  { font-size: 3.8rem; margin-bottom: 8px; }
-.res-title  { font-size: 1.2rem; font-weight: 900; color: var(--gold); margin-bottom: 12px; letter-spacing: 1px; }
+.res-emoji  { font-size:3.8rem; margin-bottom:8px; }
+.res-title  { font-size:1.2rem; font-weight:900; color:var(--gold); margin-bottom:12px; letter-spacing:1px; }
 .res-amount {
-  font-size: 2.4rem; font-weight: 900;
-  color: var(--win);
-  text-shadow: 0 0 20px rgba(0,255,153,0.5);
-  margin-bottom: 6px;
+  font-size:2.4rem; font-weight:900; color:var(--win);
+  text-shadow:0 0 20px rgba(0,255,153,0.5);
+  margin-bottom:6px;
 }
-.res-zero   { font-size: 1.8rem; font-weight: 900; color: #ff6b6b; margin-bottom: 6px; }
-.res-sub    { color: rgba(255,255,255,0.35); font-size: 0.8rem; margin-bottom: 24px; letter-spacing: 1px; }
+.res-zero   { font-size:1.8rem; font-weight:900; color:#ff6b6b; margin-bottom:6px; }
+.res-sub    { color:rgba(255,255,255,0.35); font-size:0.8rem; margin-bottom:24px; letter-spacing:1px; }
 
 .res-btn {
-  background: linear-gradient(135deg, #c0392b, #8b0000);
-  color: var(--gold);
-  border: 1px solid rgba(240,192,64,0.3);
-  border-radius: 14px;
-  padding: 12px 44px;
-  font-family: 'Cairo', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 1px;
+  background:linear-gradient(135deg, #c0392b, #8b0000);
+  color:var(--gold); border:1px solid rgba(240,192,64,0.3);
+  border-radius:14px; padding:12px 44px;
+  font-family:'Cairo',sans-serif; font-size:1rem; font-weight:700;
+  cursor:pointer; transition:all 0.2s; letter-spacing:1px;
 }
-.res-btn:hover {
-  transform: scale(1.04);
-  box-shadow: 0 4px 16px rgba(192,57,43,0.5);
-  color: #fff5a0;
-}
+.res-btn:hover { transform:scale(1.04); color:#fff5a0; }
 
 /* كونفيتي */
 .conf {
@@ -364,7 +249,7 @@ canvas#wheel {
 <!-- الرصيد -->
 <div class="balance-box">
   <div class="balance-label">رصيدك الحالي</div>
-  <div class="balance-value" id="balVal">100,000 ل.ق</div>
+  <div class="balance-value" id="balVal">100,000 NSP</div>
 </div>
 
 <!-- العجلة -->
@@ -384,76 +269,24 @@ canvas#wheel {
   🎰 &nbsp; الف العجلة!
 </button>
 
-<!-- جدول الجوائز -->
-<div class="prizes-box">
-  <div class="prizes-head">◈ &nbsp; جدول الجوائز والاحتمالات &nbsp; ◈</div>
-  <div class="prize-row">
-    <div class="prize-left">
-      <div class="prize-dot" style="background:#1e7a40"></div>
-      <span>10,000 ل.ق</span>
-    </div>
-    <div class="prize-pct">90%</div>
-  </div>
-  <div class="prize-row">
-    <div class="prize-left">
-      <div class="prize-dot" style="background:#1a3a8c"></div>
-      <span>50,000 ل.ق</span>
-    </div>
-    <div class="prize-pct">5%</div>
-  </div>
-  <div class="prize-row">
-    <div class="prize-left">
-      <div class="prize-dot" style="background:var(--gold2)"></div>
-      <span>100,000 ل.ق</span>
-    </div>
-    <div class="prize-pct">1%</div>
-  </div>
-  <div class="prize-row">
-    <div class="prize-left">
-      <div class="prize-dot" style="background:#5c1a1a"></div>
-      <span>حظاً أوفر</span>
-    </div>
-    <div class="prize-pct">4%</div>
-  </div>
-</div>
-
 <script>
-// ══════════════════════════════════════════════
-//  رسم العجلة
-// ══════════════════════════════════════════════
 const canvas = document.getElementById('wheel');
 const ctx    = canvas.getContext('2d');
 const CX = 150, CY = 150, R = 147;
 
-/*
-  8 قطاعات — توزيع الجوائز:
-  0: 10000  2: 10000  4: 10000  6: 10000  → 4 قطاعات خضراء
-  1: حظاً   5: حظاً                        → 2 قطاعات حمراء داكنة
-  3: 50000                                 → 1 قطاع أزرق
-  7: 100000                                → 1 قطاع ذهبي
-*/
 const SEGS = [
-  { prize:10000,  label:'10,000',  sub:'ل.ق',
-    bg1:'#0d3d1e', bg2:'#1e7a40', fg:'#7dffaa', dot:'#00ff77' },
-  { prize:0,      label:'حظاً',    sub:'أوفر',
-    bg1:'#2a0808', bg2:'#5c1010', fg:'#ff8888', dot:'#ff4444' },
-  { prize:10000,  label:'10,000',  sub:'ل.ق',
-    bg1:'#0d3d1e', bg2:'#1a6b35', fg:'#7dffaa', dot:'#00ff77' },
-  { prize:50000,  label:'50,000',  sub:'ل.ق',
-    bg1:'#0a1a4a', bg2:'#1a3a8c', fg:'#aaccff', dot:'#4488ff' },
-  { prize:10000,  label:'10,000',  sub:'ل.ق',
-    bg1:'#0d3d1e', bg2:'#1e7a40', fg:'#7dffaa', dot:'#00ff77' },
-  { prize:0,      label:'حظاً',    sub:'أوفر',
-    bg1:'#2a0808', bg2:'#5c1010', fg:'#ff8888', dot:'#ff4444' },
-  { prize:10000,  label:'10,000',  sub:'ل.ق',
-    bg1:'#0d3d1e', bg2:'#1a6b35', fg:'#7dffaa', dot:'#00ff77' },
-  { prize:100000, label:'100,000', sub:'ل.ق',
-    bg1:'#3a2200', bg2:'#7a4800', fg:'#ffe066', dot:'#ffd700' },
+  { prize:10000,  label:'10,000',  sub:'NSP', bg1:'#0d3d1e', bg2:'#1e7a40', fg:'#7dffaa', dot:'#00ff77' },
+  { prize:0,      label:'حظاً',    sub:'أوفر', bg1:'#2a0808', bg2:'#5c1010', fg:'#ff8888', dot:'#ff4444' },
+  { prize:10000,  label:'10,000',  sub:'NSP', bg1:'#0d3d1e', bg2:'#1a6b35', fg:'#7dffaa', dot:'#00ff77' },
+  { prize:50000,  label:'50,000',  sub:'NSP', bg1:'#0a1a4a', bg2:'#1a3a8c', fg:'#aaccff', dot:'#4488ff' },
+  { prize:10000,  label:'10,000',  sub:'NSP', bg1:'#0d3d1e', bg2:'#1e7a40', fg:'#7dffaa', dot:'#00ff77' },
+  { prize:0,      label:'حظاً',    sub:'أوفر', bg1:'#2a0808', bg2:'#5c1010', fg:'#ff8888', dot:'#ff4444' },
+  { prize:10000,  label:'10,000',  sub:'NSP', bg1:'#0d3d1e', bg2:'#1a6b35', fg:'#7dffaa', dot:'#00ff77' },
+  { prize:100000, label:'100,000', sub:'NSP', bg1:'#3a2200', bg2:'#7a4800', fg:'#ffe066', dot:'#ffd700' },
 ];
 
 const N   = SEGS.length;
 const ARC = (2 * Math.PI) / N;
-
 let wheelAngle = 0;
 let spinning   = false;
 let balance    = 100000;
@@ -467,12 +300,9 @@ function draw(wa) {
     const end   = start + ARC;
     const mid   = start + ARC / 2;
 
-    // تدرج لوني لكل قطاع
-    const gx1 = CX + (R * 0.3) * Math.cos(mid);
-    const gy1 = CY + (R * 0.3) * Math.sin(mid);
-    const gx2 = CX + R * Math.cos(mid);
-    const gy2 = CY + R * Math.sin(mid);
-    const grad = ctx.createLinearGradient(gx1, gy1, gx2, gy2);
+    const gx1 = CX + (R*0.3)*Math.cos(mid), gy1 = CY + (R*0.3)*Math.sin(mid);
+    const gx2 = CX + R*Math.cos(mid),        gy2 = CY + R*Math.sin(mid);
+    const grad = ctx.createLinearGradient(gx1,gy1,gx2,gy2);
     grad.addColorStop(0, seg.bg1);
     grad.addColorStop(1, seg.bg2);
 
@@ -483,16 +313,13 @@ function draw(wa) {
     ctx.fillStyle = grad;
     ctx.fill();
 
-    // حد ذهبي
     ctx.strokeStyle = 'rgba(240,192,64,0.4)';
     ctx.lineWidth = 1.2;
     ctx.stroke();
 
-    // نقطة ملونة على الحافة
-    const dx = CX + (R - 12) * Math.cos(mid);
-    const dy = CY + (R - 12) * Math.sin(mid);
+    // نقطة ملونة
     ctx.beginPath();
-    ctx.arc(dx, dy, 4, 0, 2 * Math.PI);
+    ctx.arc(CX+(R-12)*Math.cos(mid), CY+(R-12)*Math.sin(mid), 4, 0, 2*Math.PI);
     ctx.fillStyle = seg.dot;
     ctx.fill();
     ctx.strokeStyle = 'rgba(0,0,0,0.5)';
@@ -505,88 +332,65 @@ function draw(wa) {
     ctx.rotate(mid);
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
-
-    // ظل النص
     ctx.shadowColor = 'rgba(0,0,0,0.8)';
     ctx.shadowBlur  = 4;
 
-    ctx.font      = 'bold 14px Cairo';
+    ctx.font = 'bold 14px Cairo';
     ctx.fillStyle = seg.fg;
     ctx.fillText(seg.label, R - 22, -5);
 
-    ctx.font      = '600 10px Cairo';
-    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '600 10px Cairo';
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
     ctx.fillText(seg.sub, R - 22, 7);
 
     ctx.shadowBlur = 0;
     ctx.restore();
   }
 
-  // ── الحلقة الخارجية الذهبية ──
+  // الحلقة الخارجية
   ctx.beginPath();
-  ctx.arc(CX, CY, R, 0, 2 * Math.PI);
+  ctx.arc(CX, CY, R, 0, 2*Math.PI);
   ctx.strokeStyle = 'rgba(240,192,64,0.6)';
   ctx.lineWidth = 2;
   ctx.stroke();
 
-  // ── نقاط الحافة الخارجية ──
+  // نقاط الحافة
   for (let i = 0; i < 40; i++) {
-    const a = (i / 40) * 2 * Math.PI;
+    const a = (i/40)*2*Math.PI;
     ctx.beginPath();
-    ctx.arc(
-      CX + (R - 5) * Math.cos(a),
-      CY + (R - 5) * Math.sin(a),
-      i % 5 === 0 ? 3 : 1.5,
-      0, 2 * Math.PI
-    );
-    ctx.fillStyle = i % 5 === 0
-      ? 'rgba(240,192,64,0.9)'
-      : 'rgba(255,255,255,0.15)';
+    ctx.arc(CX+(R-5)*Math.cos(a), CY+(R-5)*Math.sin(a), i%5===0?3:1.5, 0, 2*Math.PI);
+    ctx.fillStyle = i%5===0 ? 'rgba(240,192,64,0.9)' : 'rgba(255,255,255,0.15)';
     ctx.fill();
   }
 
-  // ── الدائرة المركزية ──
-  // هالة خارجية
-  const halo = ctx.createRadialGradient(CX, CY, 18, CX, CY, 34);
-  halo.addColorStop(0, 'rgba(192,57,43,0.4)');
-  halo.addColorStop(1, 'transparent');
-  ctx.beginPath();
-  ctx.arc(CX, CY, 34, 0, 2 * Math.PI);
-  ctx.fillStyle = halo;
-  ctx.fill();
+  // المركز
+  const halo = ctx.createRadialGradient(CX,CY,18,CX,CY,34);
+  halo.addColorStop(0,'rgba(192,57,43,0.4)');
+  halo.addColorStop(1,'transparent');
+  ctx.beginPath(); ctx.arc(CX,CY,34,0,2*Math.PI);
+  ctx.fillStyle = halo; ctx.fill();
 
-  // الدائرة نفسها
-  const cg = ctx.createRadialGradient(CX-4, CY-4, 2, CX, CY, 26);
-  cg.addColorStop(0, '#ffe066');
-  cg.addColorStop(0.5, '#c0392b');
-  cg.addColorStop(1, '#5a0a00');
-  ctx.beginPath();
-  ctx.arc(CX, CY, 26, 0, 2 * Math.PI);
-  ctx.fillStyle = cg;
-  ctx.fill();
-
+  const cg = ctx.createRadialGradient(CX-4,CY-4,2,CX,CY,26);
+  cg.addColorStop(0,'#ffe066');
+  cg.addColorStop(0.5,'#c0392b');
+  cg.addColorStop(1,'#5a0a00');
+  ctx.beginPath(); ctx.arc(CX,CY,26,0,2*Math.PI);
+  ctx.fillStyle = cg; ctx.fill();
   ctx.strokeStyle = 'rgba(240,192,64,0.9)';
-  ctx.lineWidth = 2.5;
-  ctx.stroke();
+  ctx.lineWidth = 2.5; ctx.stroke();
 
-  // حرف K في المركز
   ctx.font = 'bold 20px Cairo';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillStyle = '#ffe066';
-  ctx.shadowColor = 'rgba(0,0,0,0.8)';
-  ctx.shadowBlur = 6;
-  ctx.fillText('K', CX, CY + 1);
+  ctx.shadowColor = 'rgba(0,0,0,0.8)'; ctx.shadowBlur = 6;
+  ctx.fillText('K', CX, CY+1);
   ctx.shadowBlur = 0;
 }
 
 draw(wheelAngle);
 
-// ══════════════════════════════════════════════
-//  منطق الاحتمالات
-// ══════════════════════════════════════════════
 function pickPrize() {
-  const r = Math.random() * 100;
+  const r = Math.random()*100;
   if      (r < 90) return 10000;
   else if (r < 95) return 50000;
   else if (r < 96) return 100000;
@@ -594,46 +398,40 @@ function pickPrize() {
 }
 
 function segsFor(prize) {
-  return SEGS.map((s,i) => s.prize === prize ? i : -1).filter(i => i >= 0);
+  return SEGS.map((s,i)=>s.prize===prize?i:-1).filter(i=>i>=0);
 }
 
 function calcEndAngle(segIdx) {
-  const jitter = (Math.random() * 0.5 - 0.25) * ARC;
-  const base   = -Math.PI / 2 - (segIdx * ARC + ARC / 2) + jitter;
-  const spins  = 5 + Math.floor(Math.random() * 4);
-  let target   = base + spins * 2 * Math.PI;
-  while (target <= wheelAngle + 2 * Math.PI) target += 2 * Math.PI;
+  const jitter = (Math.random()*0.5-0.25)*ARC;
+  const base   = -Math.PI/2 - (segIdx*ARC + ARC/2) + jitter;
+  const spins  = 5 + Math.floor(Math.random()*4);
+  let target   = base + spins*2*Math.PI;
+  while (target <= wheelAngle + 2*Math.PI) target += 2*Math.PI;
   return target;
 }
 
-// ══════════════════════════════════════════════
-//  اللفة
-// ══════════════════════════════════════════════
 function doSpin() {
   if (spinning) return;
-
   if (balance < 50000) {
-    showResult('❌','رصيد غير كافٍ','','تحتاج 50,000 ل.ق للف',false);
+    showResult('❌','رصيد غير كافٍ','','تحتاج 50,000 NSP للف',false);
     return;
   }
-
   spinning = true;
   document.getElementById('spinBtn').disabled = true;
 
   const prize    = pickPrize();
   const possible = segsFor(prize);
-  const segIdx   = possible[Math.floor(Math.random() * possible.length)];
+  const segIdx   = possible[Math.floor(Math.random()*possible.length)];
   const endAngle = calcEndAngle(segIdx);
-  const startA   = wheelAngle;
-  const diff     = endAngle - startA;
-  const dur      = 4200 + Math.random() * 1200;
+  const startA   = wheelAngle, diff = endAngle - startA;
+  const dur      = 4200 + Math.random()*1200;
   const t0       = performance.now();
 
-  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function easeOut(t) { return 1-Math.pow(1-t,3); }
 
   function frame(now) {
-    const p = Math.min((now - t0) / dur, 1);
-    wheelAngle = startA + diff * easeOut(p);
+    const p = Math.min((now-t0)/dur, 1);
+    wheelAngle = startA + diff*easeOut(p);
     draw(wheelAngle);
     if (p < 1) {
       requestAnimationFrame(frame);
@@ -643,58 +441,43 @@ function doSpin() {
       spinning = false;
       document.getElementById('spinBtn').disabled = false;
       balance += prize;
-      document.getElementById('balVal').textContent = balance.toLocaleString() + ' ل.ق';
-      setTimeout(() => showWinResult(prize), 400);
+      document.getElementById('balVal').textContent = balance.toLocaleString()+' NSP';
+      setTimeout(()=>showWinResult(prize), 400);
     }
   }
-
   requestAnimationFrame(frame);
 }
 
-// ══════════════════════════════════════════════
-//  النتيجة
-// ══════════════════════════════════════════════
 function showWinResult(p) {
-  if      (p >= 100000) { confetti(30); showResult('👑','الجائزة الكبرى! 🎉', p.toLocaleString()+' ل.ق','تمت إضافة المبلغ لرصيدك',true); }
-  else if (p >= 50000)  { confetti(16); showResult('🥈','مبروك! 🎊',          p.toLocaleString()+' ل.ق','تمت إضافة المبلغ لرصيدك',true); }
-  else if (p > 0)       {               showResult('🥉','ربحت!',              p.toLocaleString()+' ل.ق','تمت إضافة المبلغ لرصيدك',true); }
-  else                  {               showResult('😔','حظاً أوفر!',          '','جرب مرة أخرى غداً',false); }
+  if      (p>=100000){ confetti(30); showResult('👑','الجائزة الكبرى! 🎉', p.toLocaleString()+' NSP','تمت إضافة المبلغ لرصيدك',true); }
+  else if (p>=50000) { confetti(16); showResult('🥈','مبروك! 🎊',          p.toLocaleString()+' NSP','تمت إضافة المبلغ لرصيدك',true); }
+  else if (p>0)      {               showResult('🥉','ربحت!',              p.toLocaleString()+' NSP','تمت إضافة المبلغ لرصيدك',true); }
+  else               {               showResult('😔','حظاً أوفر!',          '','جرب مرة أخرى غداً',false); }
 }
 
-function showResult(emoji, title, amount, sub, win) {
+function showResult(emoji,title,amount,sub,win){
   document.getElementById('resEmoji').textContent = emoji;
   document.getElementById('resTitle').textContent = title;
   document.getElementById('resSub').textContent   = sub;
   const el = document.getElementById('resAmount');
-  el.innerHTML = amount
-    ? `<div class="${win?'res-amount':'res-zero'}">${amount}</div>`
-    : '';
+  el.innerHTML = amount ? `<div class="${win?'res-amount':'res-zero'}">${amount}</div>` : '';
   document.getElementById('overlay').classList.add('show');
 }
 
-function closeOverlay() {
+function closeOverlay(){
   document.getElementById('overlay').classList.remove('show');
 }
 
-// ══════════════════════════════════════════════
-//  كونفيتي بألوان البراند
-// ══════════════════════════════════════════════
-function confetti(n) {
-  const cols = ['#FFD700','#c0392b','#e74c3c','#00ff99','#ffffff','#ffe066','#ff8800'];
-  for (let i = 0; i < n; i++) {
-    const el = document.createElement('div');
-    el.className = 'conf';
-    el.style.cssText = `
-      left:${Math.random()*100}vw;
-      background:${cols[i%cols.length]};
-      --dx:${-80+Math.random()*160}px;
-      animation-duration:${1.5+Math.random()*2}s;
-      animation-delay:${Math.random()*0.5}s;
-    `;
+function confetti(n){
+  const cols=['#FFD700','#c0392b','#e74c3c','#00ff99','#ffffff','#ffe066','#ff8800'];
+  for(let i=0;i<n;i++){
+    const el=document.createElement('div');
+    el.className='conf';
+    el.style.cssText=`left:${Math.random()*100}vw;background:${cols[i%cols.length]};--dx:${-80+Math.random()*160}px;animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*0.5}s;`;
     document.body.appendChild(el);
-    el.addEventListener('animationend', () => el.remove());
+    el.addEventListener('animationend',()=>el.remove());
   }
 }
 </script>
 </body>
-    </html>
+</html>
