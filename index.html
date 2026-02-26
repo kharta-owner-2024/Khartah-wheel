@@ -249,7 +249,7 @@ canvas#wheel {
 <!-- الرصيد -->
 <div class="balance-box">
   <div class="balance-label">رصيدك الحالي</div>
-  <div class="balance-value" id="balVal">100,000 NSP</div>
+  <div class="balance-value" id="balVal">0 NSP</div>
 </div>
 
 <!-- العجلة -->
@@ -289,7 +289,7 @@ const N   = SEGS.length;
 const ARC = (2 * Math.PI) / N;
 let wheelAngle = 0;
 let spinning   = false;
-let balance    = 100000;
+let balance    = 0;
 
 function draw(wa) {
   ctx.clearRect(0, 0, 300, 300);
@@ -412,10 +412,6 @@ function calcEndAngle(segIdx) {
 
 function doSpin() {
   if (spinning) return;
-  if (balance < 50000) {
-    showResult('❌','رصيد غير كافٍ','','تحتاج 50,000 NSP للف',false);
-    return;
-  }
   spinning = true;
   document.getElementById('spinBtn').disabled = true;
 
